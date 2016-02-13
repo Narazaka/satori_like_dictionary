@@ -1,0 +1,49 @@
+# coding: utf-8
+Encoding.default_external = 'utf-8'
+
+require 'satori_like_dictionary'
+
+describe SatoriLikeDictionary do
+  let(:request) { OpenStruct.new({Reference0: "ref0"}) }
+  before(:each) { dic.parse(dic_str) }
+
+  context "can work standalone" do
+    let(:dic) { SatoriLikeDictionary.new }
+    let(:dic_str) {
+      next <<-EOM
+＊test
+：あああ
+：ああ
+
+＊test2
+aaa
+＄kk = 1
+aa
+%= kk
+（１０９）（単語）
+
+＊test3
+%= request.Reference0
+
+＠単語
+単語<%= 3 - 2 %>
+EOM
+    }
+    subject { dic.talk(id, request) }
+
+    context "：" do
+      let(:id) { "test" }
+      it { is_expected.to be == '\1\0あああ\n\1ああ' }
+    end
+
+    context "various call" do
+      let(:id) { "test2" }
+      it { is_expected.to be == '\1aaa\naa\n1\n\s[109]単語1' }
+    end
+
+    context "context reference" do
+      let(:id) { "test3" }
+      it { is_expected.to be == '\1ref0' }
+    end
+  end
+end
