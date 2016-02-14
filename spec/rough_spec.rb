@@ -27,6 +27,18 @@ aa
 ＊test3
 %= request.Reference0
 
+＊test4
+：あああ
+
+＞ジャンプ先
+
+＊test5
+→さくら
+さくらたそ～
+
+＊ジャンプ先
+：ジャンプ＋
+
 ＠単語
 単語<%= 3 - 2 %>
 EOM
@@ -46,6 +58,16 @@ EOM
     context "context reference" do
       let(:id) { "test3" }
       it { is_expected.to be == '\1ref0' }
+    end
+
+    context "jump" do
+      let(:id) { "test4" }
+      it { is_expected.to be == '\1\0あああ\n\n\1\0ジャンプ＋\e' }
+    end
+
+    context "communication" do
+      let(:id) { "test5" }
+      it { is_expected.to be == OpenStruct.new(Value: '\1さくらたそ～', Reference0: 'さくら') }
     end
   end
 end

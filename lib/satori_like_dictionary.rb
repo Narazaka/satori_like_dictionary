@@ -233,7 +233,7 @@ class SatoriLikeDictionary
     # @param [Events] events events definition
     # @param [OpenStruct] request request hash
     def render(events, request)
-      shuffle.first.render(events, request)
+      sample.render(events, request)
     end
   end
 
@@ -251,8 +251,9 @@ class SatoriLikeDictionary
 
     # change character scope
     def change_scope
-      request.__satori_scope = request.__satori_scope.nil? || request.__satori_scope == 1 ? 0 : 1
-      '\\' + request.__satori_scope.to_s
+      scope_info = "__satori_scope_#{self.object_id}"
+      request[scope_info] = request[scope_info].nil? || request[scope_info] == 1 ? 0 : 1
+      '\\' + request[scope_info].to_s
     end
 
     # jump to entry
