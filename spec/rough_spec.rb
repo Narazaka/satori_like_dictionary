@@ -21,6 +21,8 @@ aaa
 aa
 %= kk
 （１０９）（単語）
+＿選択肢 ＿選択肢2　＿still選択肢2 not＿選択肢
+＿選択肢4
 
 ＊test3
 %= request.Reference0
@@ -38,7 +40,7 @@ EOM
 
     context "various call" do
       let(:id) { "test2" }
-      it { is_expected.to be == '\1aaa\naa\n1\n\s[109]単語1' }
+      it { is_expected.to be == '\1aaa\naa\n1\n\s[109]単語1\n\q[選択肢,選択肢] \q[選択肢2　＿still選択肢2,選択肢2　＿still選択肢2] not＿選択肢\n\q[選択肢4,選択肢4]' }
     end
 
     context "context reference" do

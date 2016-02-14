@@ -114,7 +114,7 @@ class SatoriLikeDictionary
     # @return [String] result
     def render_base(events, request)
       value = render_template(events, request)
-        .gsub(/＿(\S+)/, "\\q[\\1]")
+        .gsub(/\b＿(\S+)/, "\\q[\\1,\\1]")
         .gsub(/（([^）]*)）/) do
           content = $1
           if content.match(/^[0-9０-９]+$/)
@@ -256,11 +256,13 @@ class SatoriLikeDictionary
     end
 
     # jump to entry
+    # @param [String] target_entry jump target entry name
     def jump_to(target_entry)
       "（#{target_entry}）\\e"
     end
 
     # set communication target
+    # @param [String] target_character communication target character name
     def call_to(target_character)
       request.__satori_target_character = target_character
     end
@@ -277,6 +279,9 @@ class SatoriLikeDictionary
 
   private
 
+  # line[1...line.size]
+  # @param [String] line line
+  # @return [String] line
   def linebody(line)
     line[1...line.size]
   end
@@ -288,6 +293,13 @@ class SatoriLikeDictionaryIntegratedEvents
   # initialize events
   def initialize
     @satori_like_dictionary = SatoriLikeDictionary.new(self)
+  end
+
+  # "＿" compatible OnChoiceSelect
+  # @param [OpenStruct] request request hash
+  # @return [String|OpenStruct] result
+  def OnChoiceSelect(request)
+    public_send(request.Reference0, request)
   end
 
   private
