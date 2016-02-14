@@ -3,7 +3,7 @@ lib = File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |spec|
   spec.name          = "satori_like_dictionary"
-  spec.version       = "0.0.5"
+  spec.version       = "0.0.6"
   spec.authors       = ["Narazaka"]
   spec.email         = ["info@narazaka.net"]
 

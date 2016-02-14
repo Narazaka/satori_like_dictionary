@@ -333,6 +333,9 @@ class SatoriLikeDictionaryIntegratedEvents
       # detect caller method name (= request ID)
       if RUBY_ENGINE == 'opal'
         matched = caller[1].match(/\[as \$(.*?)\]/)
+        unless matched
+          matched = caller[1].match(/^\s*at \S*\$([^$]+?)\b/)
+        end
         return unless matched
         method = matched[1]
       else
