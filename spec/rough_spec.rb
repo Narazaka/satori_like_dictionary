@@ -39,6 +39,9 @@ aa
 ＊ジャンプ先
 ：ジャンプ＋
 
+＊
+：ランダムトーク
+
 ＠単語
 単語<%= 3 - 2 %>
 EOM
@@ -68,6 +71,11 @@ EOM
     context "communication" do
       let(:id) { "test5" }
       it { is_expected.to be == OpenStruct.new(Value: '\1さくらたそ～', Reference0: 'さくら') }
+    end
+
+    context "aitalk" do
+      subject { dic.aitalk(request) }
+      it { is_expected.to be == '\1\0ランダムトーク' }
     end
   end
 end
