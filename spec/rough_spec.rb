@@ -3,14 +3,7 @@ Encoding.default_external = 'utf-8'
 
 require 'satori_like_dictionary'
 
-describe SatoriLikeDictionary do
-  let(:request) { OpenStruct.new({Reference0: "ref0"}) }
-  before(:each) { dic.parse(dic_str) }
-
-  context "can work standalone" do
-    let(:dic) { SatoriLikeDictionary.new }
-    let(:dic_str) {
-      next <<-EOM
+dic_str1 = <<-EOM
 ＊test
 ：あああ
 ：ああ
@@ -45,7 +38,14 @@ aa
 ＠単語
 単語<%= 3 - 2 %>
 EOM
-    }
+
+describe SatoriLikeDictionary do
+  let(:request) { OpenStruct.new({Reference0: "ref0"}) }
+  before(:each) { dic.parse(dic_str) }
+
+  context "can work standalone" do
+    let(:dic) { SatoriLikeDictionary.new }
+    let(:dic_str) { dic_str1 }
     subject { dic.talk(id, request) }
 
     context "：" do
@@ -77,5 +77,61 @@ EOM
       subject { dic.aitalk(request) }
       it { is_expected.to be == '\1\0ランダムトーク' }
     end
+  end
+end
+
+describe SatoriLikeDictionaryIntegratedEvents do
+
+  class Events < SatoriLikeDictionaryIntegratedEvents
+    def method_missing method_name, request
+      talk request, method_name
+    end
+
+    def OnAITalk(request)
+      aitalk request
+    end
+
+    def test3(request)
+      talk request
+    end
+
+    def ジャンプ先(request)
+      talk(request) + "!"
+    end
+  end
+
+  let(:events) { Events.new }
+  let(:request) { OpenStruct.new({Reference0: "ref0"}) }
+  before(:each) { events.send :parse_string, dic_str }
+
+  context "can work" do
+    let(:dic_str) { dic_str1 }
+
+    context "test" do
+      subject { events.test(request) }
+      it { is_expected.to be == '\1\0あああ\n\1ああ' }
+    end
+
+    context "aitalk" do
+      subject { events.OnAITalk(request) }
+      it { is_expected.to be == '\1\0ランダムトーク' }
+    end
+
+    context "talk called with no method name" do
+      subject { events.test3(request) }
+      it { is_expected.to be == '\1ref0' }
+    end
+
+    context "choice select" do
+      let(:request) { OpenStruct.new({Reference0: "test"}) }
+      subject { events.OnChoiceSelect(request) }
+      it { is_expected.to be == '\1\0あああ\n\1ああ' }
+    end
+
+    context "event reference" do
+      subject { events.test4(request) }
+      it { is_expected.to be == '\1\0あああ\n\n\1\0ジャンプ＋!\e' }
+    end
+
   end
 end
