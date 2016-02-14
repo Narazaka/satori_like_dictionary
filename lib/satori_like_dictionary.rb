@@ -305,6 +305,12 @@ class SatoriLikeDictionaryIntegratedEvents
 
   private
 
+  # parse and register satori like dictionary source
+  # @param [String] source satori like dictionary source
+  def parse_string(string)
+    @satori_like_dictionary.parse(string)
+  end
+
   # load all files in a directory as satori like dictionaries
   # @param [String] file path to file
   def load_file(file)
